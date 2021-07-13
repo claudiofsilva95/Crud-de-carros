@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %} Tabela de carros {% endblock %}
+{% block content %}
+    <header class="cabecalho">
+        <h1>Bem vindo a tabela de carros!</h1>        
+    </header>
+    <div class="menu">
+        <p><a href="{% url 'criar-carro' %}">Add novo carro</a></p>
+    </div>
+    <div class="div-tabela">
+        <table class="tabela">
+            <thead>
+                <tr>
+                    <th>Marca</th>
+                    <th>Modelo</th>
+                    <th>Ano</th>
+                    <th>Cor</th>
+                    <th>Tipo de Combustível</th>
+                    <th>Portas</th>
+                    <th>Transmissão</th>
+                    <th>Motor</th>
+                    <th>Tipo de carroceria</th>
+                    <th>Quilômetros</th>
+                    <th colspan="2"></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for carro in object_list %}
+                <tr>
+                    <td>{{ carro.marca }}</td>
+                    <td>{{ carro.modelo }}</td>
+                    <td>{{ carro.ano }}</td>
+                    <td>{{ carro.cor }}</td>
+                    <td>{{ carro.tipo_do_combustivel }}</td>
+                    <td>{{ carro.portas }}</td>
+                    <td>{{ carro.transmissao }}</td>
+                    <td>{{ carro.motor }}</td>
+                    <td>{{ carro.tipo_da_carroceria }}</td>
+                    <td>{{ carro.km }}</td>
+                    <td class="td"><a href="{% url 'editar-carro' carro.id %}" class="btn-update">Update</a></td>
+                    <td class="td"><a href="{% url 'deletar-carro' carro.id %}" class="btn-delete">Delete</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="paginacao">
+        <p>
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}">&laquo;</a>
+        {% endif %}
+        {% for pg in page_obj.paginator.page_range %}
+            <!-- Sempre mostra as 3 primeiras e 3 últimas páginas -->
+            {% if pg == 1 or pg == 2 or pg == 3 or pg == page_obj.paginator.num_pages or pg == page_obj.paginator.num_pages|add:'-1' or pg == page_obj.paginator.num_pages|add:'-2' %}
+                {% if page_obj.number == pg %}
+                <a class="page-link" href="?page={{ pg }}">{{ pg }}</a>
+                {% else %}
+                <a class="page-link" href="?page={{ pg }}">{{ pg }}</a>
+                {% endif %}            
+            {% else %}
+                {% if page_obj.number == pg %}
+                <a class="page-link" href="?page={{ pg }}">{{ pg }}</a>
+                {% elif pg > page_obj.number|add:'-4' and pg < page_obj.number|add:'4' %} <!-- Mostra 3 páginas antes e 3 páginas depois da atual -->
+                <a class="page-link" href="?page={{ pg }}">{{ pg }}</a>
+                {% elif pg == page_obj.number|add:'-4' or pg == page_obj.number|add:'4' %}
+                <a class="page-link" href="">...</a>
+                {% endif %}
+            {% endif %}
+            {% endfor %}
+    
+            {% if page_obj.has_next %}
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}">&raquo;</a>
+            {% endif %}
+        </p>
+        <p class="p-final">Pagina: {{ page_obj.number }}</p>
+        </div>
+{% endblock %}
